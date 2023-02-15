@@ -1,0 +1,33 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: echo1 
+  labels:
+    app: echo
+spec:
+  containers:
+  - name: http-app
+    image: sansayin/goapp:latest 
+---
+kind: Pod
+apiVersion: v1
+metadata:
+  name: echo2 
+  labels:
+    app: echo
+spec:
+  containers:
+  - name: http-app
+    image: sansayin/goapp:latest 
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: rest-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: echo
+  ports:
+  # Default port used by the image
+  - port: 8081 
