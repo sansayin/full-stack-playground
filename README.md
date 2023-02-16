@@ -1,1 +1,1 @@
-![](wordcloud.png)
+![](wordcloud.png#center)
