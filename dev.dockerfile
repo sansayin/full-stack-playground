@@ -4,6 +4,10 @@ ENV CGO_ENABLED=0
 COPY go.* .
 COPY docs .
 COPY api .
+COPY cmd .
+COPY db .
+COPY graph .
+COPY server .
 RUN --mount=type=cache,target=/go/pkg/mod \
     go mod download
 
@@ -13,7 +17,7 @@ ARG TARGETARCH
 RUN --mount=target=. \
     --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
-    GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o /out/main .
+    GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o /out/main ./cmd 
 
 FROM base AS unit-test
 RUN --mount=target=. \

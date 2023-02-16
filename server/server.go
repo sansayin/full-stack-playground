@@ -1,15 +1,14 @@
-package main
+package server
 
 import (
 	"bytes"
 	"encoding/json"
-	"flag"
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	API "go-rest/api"
- Graph 	"go-rest/graph"
- "go-rest/db"
+	"go-rest/db"
+	Graph "go-rest/graph"
 	"io"
 	"log"
 	"net/http"
@@ -22,18 +21,13 @@ import (
 
 type httpServer struct {
 	e    *echo.Echo
-  da   *db.Adapter
+	da   *db.Adapter
 	port int
 }
 
-type Options struct {
-	METHOD   string
-	ENDPOINT string
-	CONTENT  string
-}
 
 func NewServer(port int, da *db.Adapter) *httpServer {
-  return &httpServer{port: port,da:da}
+	return &httpServer{port: port, da: da}
 }
 
 func (server httpServer) getIPs(ch chan bool) {
@@ -47,7 +41,8 @@ func (server httpServer) getIPs(ch chan bool) {
 	}
 	ch <- true
 }
-func (server httpServer) startCWDHttp() {
+
+func (server httpServer) Run() {
 
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -69,7 +64,7 @@ func (server httpServer) startCWDHttp() {
 
 	API.NewRest(server.e, server.da)
 
-  Graph.NewGraph(server.e, server.da)
+	Graph.NewGraph(server.e, server.da)
 
 	go server.e.Start(":" + strconv.Itoa(server.port))
 	log.Printf("[Serving in directory] %v\n", dir)
@@ -78,9 +73,7 @@ func (server httpServer) startCWDHttp() {
 	wg.Wait()
 }
 
-
-func (server httpServer) doHttpMethod(method string, endpoint string, content string) (string, error) {
-
+func (server httpServer) HttpMethod(method string, endpoint string, content string) (string, error) {
 	body, err := os.ReadFile(content)
 
 	if err != nil {
@@ -111,33 +104,3 @@ func (server httpServer) doHttpMethod(method string, endpoint string, content st
 	return prettyJSON.String(), nil
 }
 
-func main() {
-	help := flag.Bool("help", false, "Show help")
-	endpot := flag.String("api", "", "URL of RestAPI")
-	conent := flag.String("content", "", "File with content to post")
-	method := flag.String("method", "GET", "HTTP Methods:GET|POST|PUT|DELETE")
-	flag.Parse()
-
-	if *help {
-		flag.Usage()
-		os.Exit(0)
-	}
-
-	//dsourceName := os.Getenv("DS_NAME")
-  dataSourceName:="host=postgres user=postgres password=p4ssw0rd dbname=dev port=54320 sslmode=disable"
-  dbAdapter, err := db.NewPostSqlDBAdaptor(dataSourceName)
-	
-  if err != nil {
-		log.Fatalf("failed to initiate dbase connection: %v", err)
-	}
-	server := NewServer(8081,dbAdapter)
-	if len(os.Args) == 1 {
-		server.startCWDHttp()
-		os.Exit(0)
-	}
-	result, err := server.doHttpMethod(*method, *endpot, *conent)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Printf("\n<<<<<<<<\n %v\n", result)
-}

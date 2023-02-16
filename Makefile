@@ -42,7 +42,7 @@ kind-deploy:
 	kubectl get svc/rest-service
 
 .PHONY: image
-image:
+image: bin/main
 	@docker build -t sansayin/goapp .
 
 .PHONY: docker-run

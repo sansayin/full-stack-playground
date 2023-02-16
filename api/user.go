@@ -61,7 +61,7 @@ func NewRest(e *echo.Echo, da *db.Adapter) {
 	e.DELETE("/users/:id", api.deleteUser)
 	// programmatically set swagger info
 	docs.SwaggerInfo.Title = "Swagger User API"
-	docs.SwaggerInfo.Description = "This is a sample rest server. v1.0"
+	docs.SwaggerInfo.Description = "This is a sample rest server. v1.1"
 	docs.SwaggerInfo.Version = "1.0"
 	docs.SwaggerInfo.Host = "localhost:8081"
 	docs.SwaggerInfo.BasePath = "/"
@@ -88,6 +88,7 @@ func (api API) createUser(c echo.Context) error {
 	}
 	if err := api.db.Create(&user).Error; err != nil {
 		log.Printf("Create User Error:%v", err)
+		return c.JSON(http.StatusBadRequest,err)
 	}
 	return c.JSON(http.StatusCreated, user)
 }
@@ -105,7 +106,7 @@ func (api API) getUser(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	if err := api.db.Where("id = ?", id).First(&user).Error; err != nil {
 		log.Printf("Get User Error:%v", err)
-		return c.NoContent(http.StatusNoContent)
+		return c.JSON(http.StatusNotFound,err)
 	}
 	return c.JSON(http.StatusOK, user)
 }
@@ -125,7 +126,7 @@ func (api API) updateUser(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	if err := api.db.Where("id = ?", id).Take(&user).Error; err != nil {
 		log.Printf("Update User Error:%v", err)
-		return c.NoContent(http.StatusNoContent)
+		return c.JSON(http.StatusNotFound,err)
 	}
 	if user.ID == id {
 		if err := c.Bind(&user); err != nil {
@@ -152,7 +153,7 @@ func (api API) deleteUser(c echo.Context) error {
 	user := RestUser{}
 	if err := api.db.Where("id = ?", id).Unscoped().Delete(&user).Error; err != nil {
 		log.Printf("Delete User Error:%v", err)
-		return c.NoContent(http.StatusNoContent)
+		return c.JSON(http.StatusNotFound,err)
 	}
 	return c.JSON(http.StatusOK, user)
 }
@@ -169,7 +170,7 @@ func (api API) getAllUsers(c echo.Context) error {
 	users := []RestUser{}
 	if err := api.db.Find(&users).Error; err != nil {
 		log.Printf("Get User Error:%v", err)
-		return c.NoContent(http.StatusNoContent)
+		return c.JSON(http.StatusNotFound,err)
 	}
 	return c.JSON(http.StatusOK, users)
 }
