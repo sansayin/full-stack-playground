@@ -8,7 +8,7 @@ bin/main:
 	@docker build -f ./dev.dockerfile . --target bin \
 	--output ./bin/ \
 	--platform ${PLATFORM}
-
+	#CGO_ENABLED=1 go build -o bin/main -a -ldflags '-linkmode external -extldflags "-static"' ./cmd 
 .PHONY: unit-test
 unit-test:
 	@docker build -f ./dev.dockerfile . --target unit-test
@@ -42,7 +42,7 @@ kind-deploy:
 	kubectl get svc/rest-service
 
 .PHONY: image
-image: bin/main
+image: 
 	@docker build -t sansayin/goapp .
 
 .PHONY: docker-run

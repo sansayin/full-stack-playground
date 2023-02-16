@@ -9,6 +9,7 @@ require (
 	github.com/swaggo/swag v1.8.10
 	github.com/vektah/gqlparser/v2 v2.5.1
 	gorm.io/driver/postgres v1.4.7
+	gorm.io/driver/sqlite v1.4.4
 	gorm.io/gorm v1.24.5
 )
 
@@ -34,6 +35,7 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
+	github.com/mattn/go-sqlite3 v1.14.15 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/swaggo/files v0.0.0-20220728132757-551d4a08d97a // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect

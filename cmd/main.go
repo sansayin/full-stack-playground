@@ -23,7 +23,7 @@ func main() {
 
 	//dsourceName := os.Getenv("DS_NAME")
 	dataSourceName := "host=postgres user=postgres password=p4ssw0rd dbname=dev port=54320 sslmode=disable"
-	dbAdapter, err := db.NewPostSqlDBAdaptor(dataSourceName)
+	dbAdapter, err := db.NewSqlitDBAdaptor(dataSourceName)
 
 	if err != nil {
 		log.Fatalf("failed to initiate dbase connection: %v", err)

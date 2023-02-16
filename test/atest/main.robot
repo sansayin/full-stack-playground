@@ -1,7 +1,7 @@
 *** Settings ***
 Library               RequestsLibrary
 Library               JSONLibrary
-#Library               Collections
+Library               Collections
 
 #Suite Setup    Create Session  jsonplaceholder  http://127.0.0.1:8081
 Suite Setup    Create Session  jsonplaceholder  http://172.22.255.1:8081
