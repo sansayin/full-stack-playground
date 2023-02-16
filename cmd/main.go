@@ -12,7 +12,7 @@ func main() {
 
 	help := flag.Bool("help", false, "Show help")
 	endpot := flag.String("api", "", "URL of RestAPI")
-	conent := flag.String("content", "", "File with content to post")
+	file := flag.String("file", "", "File with content to post")
 	method := flag.String("method", "GET", "HTTP Methods:GET|POST|PUT|DELETE")
 	flag.Parse()
 
@@ -23,17 +23,14 @@ func main() {
 
 	//dsourceName := os.Getenv("DS_NAME")
 	dataSourceName := "host=postgres user=postgres password=p4ssw0rd dbname=dev port=54320 sslmode=disable"
-	dbAdapter, err := db.NewSqlitDBAdaptor(dataSourceName)
+	dbAdapter, _ := db.NewSqlitDBAdaptor(dataSourceName)
 
-	if err != nil {
-		log.Fatalf("failed to initiate dbase connection: %v", err)
-	}
 	server := server.NewServer(8081, dbAdapter)
 	if len(os.Args) == 1 {
 		server.Run()
 		os.Exit(0)
 	}
-	result, err := server.HttpMethod(*method, *endpot, *conent)
+	result, err := server.HttpMethod(*method, *endpot, *file)
 	if err != nil {
 		log.Fatal(err)
 	}
