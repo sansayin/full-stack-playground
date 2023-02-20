@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"go-rest/db"
-  "go-rest/server"
+	"go-rest/server"
 	"log"
 	"os"
 )
@@ -11,7 +11,7 @@ import (
 func main() {
 
 	help := flag.Bool("help", false, "Show help")
-	endpot := flag.String("api", "", "URL of RestAPI")
+	api := flag.String("api", "", "URL of RestAPI")
 	file := flag.String("file", "", "File with content to post")
 	method := flag.String("method", "GET", "HTTP Methods:GET|POST|PUT|DELETE")
 	flag.Parse()
@@ -30,7 +30,7 @@ func main() {
 		server.Run()
 		os.Exit(0)
 	}
-	result, err := server.HttpMethod(*method, *endpot, *file)
+	result, err := server.HttpMethod(*method, *api, *file)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -77,7 +77,7 @@ func (server httpServer) Run() {
 	server.e.Use(middleware.Recover())
 	server.e.Use(middleware.CORS())
 	server.e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
-		Root:   ".",
+		Root:   "./html",
 		Browse: true,
 	})) 
 	server.e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
@@ -90,7 +90,7 @@ func (server httpServer) Run() {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		log.Printf("[Serving in directory] %v\n", dir)
+		log.Printf("[Serving in directory] %v/html\n", dir)
 		server.e.Start(":" + strconv.Itoa(server.port))
 	}()
 

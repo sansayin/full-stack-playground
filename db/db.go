@@ -2,7 +2,7 @@ package db
 
 import (
 	"gorm.io/driver/postgres"
-  "gorm.io/driver/sqlite"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"log"
 )
@@ -20,17 +20,17 @@ func NewPostSqlDBAdaptor(dataSourceName string) (*Adapter, error) {
 	return &Adapter{db: db}, nil
 }
 
-
 func NewSqlitDBAdaptor(dataSourceName string) (*Adapter, error) {
 	// connect
-  db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{
-  SkipDefaultTransaction: true,
-})
+	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{
+		SkipDefaultTransaction: true,
+	})
 	if err != nil {
 		log.Fatalf("db connection failur: %v", err)
 	}
 	return &Adapter{db: db}, nil
 }
+
 func (da Adapter) Get() *gorm.DB {
 	return da.db
 }
