@@ -8,7 +8,7 @@ simply run make
 make
 ```
 
-this will build within docker env, and out put executable in bin folder
+this will build within docker env, and out put executable in bin folder.
 Taking longer time to build after using SqlitDB, pretty fast when docker image was cached.
 
 ## Make Docker Image
