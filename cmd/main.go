@@ -22,8 +22,8 @@ func main() {
 	}
 
 	//dsourceName := os.Getenv("DS_NAME")
-	dataSourceName := "host=postgres user=postgres password=p4ssw0rd dbname=dev port=54320 sslmode=disable"
-	dbAdapter, _ := db.NewSqlitDBAdaptor(dataSourceName)
+	//dataSourceName := "host=postgres user=postgres password=p4ssw0rd dbname=dev port=54320 sslmode=disable"
+	dbAdapter, _ := db.NewSqlitDBAdaptor("")
 
 	server := server.NewServer(8081, dbAdapter)
 	if len(os.Args) == 1 {
