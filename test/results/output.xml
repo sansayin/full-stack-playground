@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 6.0.2 (Python 3.10.9 on linux)" generated="20230215 20:19:00.982" rpa="false" schemaversion="3">
+<suite id="s1" name="Atest" source="/home/bing/dev/go/my-go/src/test/atest">
+<suite id="s1-s1" name="Main" source="/home/bing/dev/go/my-go/src/test/atest/main.robot">
+<kw name="Create Session" library="RequestsLibrary" type="SETUP">
+<arg>jsonplaceholder</arg>
+<arg>http://172.22.255.1:8081</arg>
+<doc>Create Session: create a HTTP session to a server</doc>
+<msg timestamp="20230215 20:19:01.072" level="INFO">Creating Session using : alias=jsonplaceholder, url=http://172.22.255.1:8081, headers={},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
+<status status="PASS" starttime="20230215 20:19:01.072" endtime="20230215 20:19:01.072"/>
+</kw>
+<test id="s1-s1-t1" name="Create User" line="11">
+<kw name="Create Dictionary" library="BuiltIn">
+<var>&amp;{data}</var>
+<arg>name=iBaby</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<msg timestamp="20230215 20:19:01.073" level="INFO">&amp;{data} = { name=iBaby }</msg>
+<status status="PASS" starttime="20230215 20:19:01.072" endtime="20230215 20:19:01.073"/>
+</kw>
+<kw name="POST On Session" library="RequestsLibrary">
+<var>${resp}</var>
+<arg>jsonplaceholder</arg>
+<arg>/users</arg>
+<arg>json=${data}</arg>
+<arg>expected_status=anything</arg>
+<doc>Sends a POST request on a previously created HTTP Session.</doc>
+<msg timestamp="20230215 20:19:01.082" level="INFO">POST Request : url=http://172.22.255.1:8081/users 
+ path_url=/users 
+ headers={'User-Agent': 'python-requests/2.28.2', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Length': '17', 'Content-Type': 'application/json'} 
+ body=b'{"name": "iBaby"}' 
+ </msg>
+<msg timestamp="20230215 20:19:01.082" level="INFO">POST Response : url=http://172.22.255.1:8081/users 
+ status=201, reason=Created 
+ headers={'Content-Type': 'application/json; charset=UTF-8', 'Vary': 'Origin', 'Date': 'Thu, 16 Feb 2023 04:19:01 GMT', 'Content-Length': '24'} 
+ body={"id":3,"name":"iBaby"}
+ 
+ </msg>
+<msg timestamp="20230215 20:19:01.082" level="INFO">${resp} = &lt;Response [201]&gt;</msg>
+<status status="PASS" starttime="20230215 20:19:01.073" endtime="20230215 20:19:01.082"/>
+</kw>
+<kw name="Status Should Be" library="RequestsLibrary">
+<arg>201</arg>
+<arg>${resp}</arg>
+<doc>Fails if response status code is different than the expected.</doc>
+<status status="PASS" starttime="20230215 20:19:01.082" endtime="20230215 20:19:01.082"/>
+</kw>
+<kw name="Dictionary Should Contain Key" library="Collections">
+<arg>${resp.json()}</arg>
+<arg>id</arg>
+<doc>Fails if ``key`` is not found from ``dictionary``.</doc>
+<status status="PASS" starttime="20230215 20:19:01.082" endtime="20230215 20:19:01.083"/>
+</kw>
+<kw name="Get Value From Json" library="JSONLibrary">
+<var>${id}</var>
+<arg>${resp.json()}</arg>
+<arg>id</arg>
+<doc>Get Value From JSON using JSONPath</doc>
+<msg timestamp="20230215 20:19:01.098" level="INFO">${id} = [3]</msg>
+<status status="PASS" starttime="20230215 20:19:01.083" endtime="20230215 20:19:01.098"/>
+</kw>
+<kw name="Set Global Variable" library="BuiltIn">
+<arg>${USER_ID}</arg>
+<arg>${id}[0]</arg>
+<doc>Makes a variable available globally in all tests and suites.</doc>
+<msg timestamp="20230215 20:19:01.099" level="INFO">${USER_ID} = 3</msg>
+<status status="PASS" starttime="20230215 20:19:01.098" endtime="20230215 20:19:01.099"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>${USER_ID}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" starttime="20230215 20:19:01.099" endtime="20230215 20:19:01.099"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>${resp.json()}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" starttime="20230215 20:19:01.099" endtime="20230215 20:19:01.099"/>
+</kw>
+<status status="PASS" starttime="20230215 20:19:01.072" endtime="20230215 20:19:01.099"/>
+</test>
+<test id="s1-s1-t2" name="Get User" line="22">
+<kw name="Log To Console" library="BuiltIn">
+<arg>${USER_ID}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" starttime="20230215 20:19:01.100" endtime="20230215 20:19:01.100"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${endpoint}</var>
+<arg>/users/${USER_ID}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<msg timestamp="20230215 20:19:01.100" level="INFO">${endpoint} = /users/3</msg>
+<status status="PASS" starttime="20230215 20:19:01.100" endtime="20230215 20:19:01.100"/>
+</kw>
+<kw name="GET On Session" library="RequestsLibrary">
+<var>${resp}</var>
+<arg>jsonplaceholder</arg>
+<arg>${endpoint}</arg>
+<doc>Sends a GET request on a previously created HTTP Session.</doc>
+<msg timestamp="20230215 20:19:01.101" level="INFO">GET Request : url=http://172.22.255.1:8081/users/3 
+ path_url=/users/3 
+ headers={'User-Agent': 'python-requests/2.28.2', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'} 
+ body=None 
+ </msg>
+<msg timestamp="20230215 20:19:01.101" level="INFO">GET Response : url=http://172.22.255.1:8081/users/3 
+ status=200, reason=OK 
+ headers={'Content-Type': 'application/json; charset=UTF-8', 'Vary': 'Origin', 'Date': 'Thu, 16 Feb 2023 04:19:01 GMT', 'Content-Length': '24'} 
+ body={"id":3,"name":"iBaby"}
+ 
+ </msg>
+<msg timestamp="20230215 20:19:01.101" level="INFO">${resp} = &lt;Response [200]&gt;</msg>
+<status status="PASS" starttime="20230215 20:19:01.100" endtime="20230215 20:19:01.102"/>
+</kw>
+<kw name="Should Be Equal As Strings" library="BuiltIn">
+<arg>${resp.reason}</arg>
+<arg>OK</arg>
+<doc>Fails if objects are unequal after converting them to strings.</doc>
+<status status="PASS" starttime="20230215 20:19:01.102" endtime="20230215 20:19:01.102"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>${resp.json()}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" starttime="20230215 20:19:01.102" endtime="20230215 20:19:01.102"/>
+</kw>
+<status status="PASS" starttime="20230215 20:19:01.100" endtime="20230215 20:19:01.103"/>
+</test>
+<test id="s1-s1-t3" name="Update User" line="29">
+<kw name="Log To Console" library="BuiltIn">
+<arg>${USER_ID}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" starttime="20230215 20:19:01.103" endtime="20230215 20:19:01.103"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${endpoint}</var>
+<arg>/users/${USER_ID}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<msg timestamp="20230215 20:19:01.103" level="INFO">${endpoint} = /users/3</msg>
+<status status="PASS" starttime="20230215 20:19:01.103" endtime="20230215 20:19:01.103"/>
+</kw>
+<kw name="Create Dictionary" library="BuiltIn">
+<var>&amp;{data}</var>
+<arg>name=New Baby</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<msg timestamp="20230215 20:19:01.103" level="INFO">&amp;{data} = { name=New Baby }</msg>
+<status status="PASS" starttime="20230215 20:19:01.103" endtime="20230215 20:19:01.104"/>
+</kw>
+<kw name="PUT On Session" library="RequestsLibrary">
+<var>${resp}</var>
+<arg>jsonplaceholder</arg>
+<arg>${endpoint}</arg>
+<arg>json=${data}</arg>
+<arg>expected_status=anything</arg>
+<doc>Sends a PUT request on a previously created HTTP Session.</doc>
+<msg timestamp="20230215 20:19:01.111" level="INFO">PUT Request : url=http://172.22.255.1:8081/users/3 
+ path_url=/users/3 
+ headers={'User-Agent': 'python-requests/2.28.2', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Length': '20', 'Content-Type': 'application/json'} 
+ body=b'{"name": "New Baby"}' 
+ </msg>
+<msg timestamp="20230215 20:19:01.111" level="INFO">PUT Response : url=http://172.22.255.1:8081/users/3 
+ status=200, reason=OK 
+ headers={'Content-Type': 'application/json; charset=UTF-8', 'Vary': 'Origin', 'Date': 'Thu, 16 Feb 2023 04:19:01 GMT', 'Content-Length': '27'} 
+ body={"id":3,"name":"New Baby"}
+ 
+ </msg>
+<msg timestamp="20230215 20:19:01.111" level="INFO">${resp} = &lt;Response [200]&gt;</msg>
+<status status="PASS" starttime="20230215 20:19:01.104" endtime="20230215 20:19:01.111"/>
+</kw>
+<kw name="Status Should Be" library="RequestsLibrary">
+<arg>200</arg>
+<arg>${resp}</arg>
+<doc>Fails if response status code is different than the expected.</doc>
+<status status="PASS" starttime="20230215 20:19:01.112" endtime="20230215 20:19:01.112"/>
+</kw>
+<kw name="Dictionary Should Contain Key" library="Collections">
+<arg>${resp.json()}</arg>
+<arg>id</arg>
+<doc>Fails if ``key`` is not found from ``dictionary``.</doc>
+<status status="PASS" starttime="20230215 20:19:01.112" endtime="20230215 20:19:01.112"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>${resp.json()}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" starttime="20230215 20:19:01.112" endtime="20230215 20:19:01.113"/>
+</kw>
+<status status="PASS" starttime="20230215 20:19:01.103" endtime="20230215 20:19:01.113"/>
+</test>
+<test id="s1-s1-t4" name="Delete User" line="38">
+<kw name="Set Variable" library="BuiltIn">
+<var>${endpoint}</var>
+<arg>/users/${USER_ID}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<msg timestamp="20230215 20:19:01.113" level="INFO">${endpoint} = /users/3</msg>
+<status status="PASS" starttime="20230215 20:19:01.113" endtime="20230215 20:19:01.113"/>
+</kw>
+<kw name="DELETE On Session" library="RequestsLibrary">
+<var>${resp}</var>
+<arg>jsonplaceholder</arg>
+<arg>${endpoint}</arg>
+<doc>Sends a DELETE request on a previously created HTTP Session.</doc>
+<msg timestamp="20230215 20:19:01.131" level="INFO">DELETE Request : url=http://172.22.255.1:8081/users/3 
+ path_url=/users/3 
+ headers={'User-Agent': 'python-requests/2.28.2', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Length': '0'} 
+ body=None 
+ </msg>
+<msg timestamp="20230215 20:19:01.131" level="INFO">DELETE Response : url=http://172.22.255.1:8081/users/3 
+ status=200, reason=OK 
+ headers={'Content-Type': 'application/json; charset=UTF-8', 'Vary': 'Origin', 'Date': 'Thu, 16 Feb 2023 04:19:01 GMT', 'Content-Length': '19'} 
+ body={"id":0,"name":""}
+ 
+ </msg>
+<msg timestamp="20230215 20:19:01.131" level="INFO">${resp} = &lt;Response [200]&gt;</msg>
+<status status="PASS" starttime="20230215 20:19:01.113" endtime="20230215 20:19:01.131"/>
+</kw>
+<kw name="Status Should Be" library="RequestsLibrary">
+<arg>200</arg>
+<arg>${resp}</arg>
+<doc>Fails if response status code is different than the expected.</doc>
+<status status="PASS" starttime="20230215 20:19:01.131" endtime="20230215 20:19:01.131"/>
+</kw>
+<status status="PASS" starttime="20230215 20:19:01.113" endtime="20230215 20:19:01.131"/>
+</test>
+<status status="PASS" starttime="20230215 20:19:00.995" endtime="20230215 20:19:01.132"/>
+</suite>
+<status status="PASS" starttime="20230215 20:19:00.982" endtime="20230215 20:19:01.132"/>
+</suite>
+<statistics>
+<total>
+<stat pass="4" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="4" fail="0" skip="0" id="s1" name="Atest">Atest</stat>
+<stat pass="4" fail="0" skip="0" id="s1-s1" name="Main">Atest.Main</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

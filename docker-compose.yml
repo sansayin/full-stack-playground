@@ -1,0 +1,16 @@
+version: '3'
+services:
+  go-rest:
+    image: sansayin/goapp:latest 
+    environment:
+      PSQL_DATABASE: dev 
+      PSQL_USERNAME: postgres 
+      PSQL_PASSWORD: p4ssw0rd
+    ports:
+      - 8081:8081
+    networks:
+      - network1
+networks:
+  network1:
+    name: postgre_default
+    external: true

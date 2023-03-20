@@ -1,0 +1,4 @@
+{
+"query":"query MyQuery {  actors(first: 4, offset:10) {    nodes {      firstName      lastName    }    pageInfo {      endCursor      hasNextPage      hasPreviousPage      startCursor    }  }}"
+}
+
