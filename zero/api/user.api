@@ -1,0 +1,20 @@
+type (
+	UserId {
+		Id string `path:"id"`
+	}
+
+	UserInfo {
+		Id   string `json:"id"`
+		Name string `json:"name"`
+	}
+)
+service users {
+	@handler getUser
+	get /api/users/get/:id (UserId) returns (UserInfo)
+	
+	@handler getAllUsers
+	get /api/users returns([]UserInfo)
+	
+	@handler addUser
+	post /api/users (UserInfo) returns (UserId)
+}
