@@ -14,4 +14,4 @@ spec:
     - port: 5432
   # Pod to route service traffic  
   selector:
-    app: postgresdb
+    app: postgresd

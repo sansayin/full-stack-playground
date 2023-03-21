@@ -26,13 +26,13 @@ lint:
 .PHONY: kind-cluster
 kind-cluster:
 	kind create cluster --config ./kind-cluster.yaml --name dev-cluster
-	kubectl apply -f ./db-endpoint.yaml
-	kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml
+	#kubectl apply -f ./db-endpoint.yaml
+	kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.9/config/manifests/metallb-native.yaml
 	kubectl apply -f ./metallb-config.yaml
 
 .PHONY: delete-cluster
 delete-cluster:
-	kkind delete cluster --name dev-cluster 
+	kind delete cluster --name dev-cluster 
 
 .PHONY: kind-deploy
 kind-deploy:
@@ -77,6 +77,10 @@ update:
 getall:
 	curl -X GET http://$(LB_IP):8081/users
 
+.PHONY: stress
+stress:
+	ab -p user.json -T application/json -c 100 -n 2000 \
+	http://$(LB_IP):8081/users
 
 .ONESHELL:
 .PHONY: robot-env 

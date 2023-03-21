@@ -1,10 +1,7 @@
-FROM alpine:edge AS base 
-RUN apk update
-RUN apk upgrade
-RUN apk add --update go=1.20.1-r0 gcc=12.2.1_git20220924-r9 g++=12.2.1_git20220924-r9
+FROM golang:alpine AS base 
 
 WORKDIR /src
-ENV CGO_ENABLED=1
+ENV CGO_ENABLED=0
 COPY go.* .
 COPY docs .
 COPY api .
@@ -21,7 +18,7 @@ ARG TARGETARCH
 RUN --mount=target=. \
     --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
-    GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o /out/main -a -ldflags '-linkmode external -extldflags "-static"' ./cmd
+    GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o /out/main  ./cmd
 #RUN CGO_ENABLED=1 GOOS=linux go build -o /app -a -ldflags '-linkmode external -extldflags "-static"' .
 FROM base AS unit-test
 RUN --mount=target=. \

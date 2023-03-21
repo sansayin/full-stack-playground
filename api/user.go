@@ -19,7 +19,7 @@ type (
 	RestUser struct {
 		//		gorm.Model
 		//ID     string `gorm:"type:uuid;default:gen_random_uuid();rimaryKey" json:"id"`
-		ID   int    `gorm:"type:int;autoincrement;rimaryKey" json:"id"`
+		ID   int    `gorm:"type:int;autoincrement;primaryKey" json:"id"`
 		Name string `gorm:"type:varchar(32)" json:"name"`
 	}
 )
@@ -57,6 +57,7 @@ func NewRest(e *echo.Echo, da *db.Adapter) {
 	e.PUT("/users/:id", api.updateUser)
 	e.GET("/users/:id", api.getUser)
 	e.GET("/users", api.getAllUsers)
+  e.GET("/cleanup", api.deleteAll)
 	e.POST("/users", api.createUser)
 	e.DELETE("/users/:id", api.deleteUser)
 	// programmatically set swagger info
@@ -80,8 +81,8 @@ func NewRest(e *echo.Echo, da *db.Adapter) {
 // @Success 200 {object} map[string]interface{}
 // @Router /users [post]
 func (api API) createUser(c echo.Context) error {
-	lock.Lock()
-	defer lock.Unlock()
+//	lock.Lock()
+//	defer lock.Unlock()
 	user := RestUser{}
 	if err := c.Bind(&user); err != nil {
 		return err
@@ -158,6 +159,14 @@ func (api API) deleteUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, user)
 }
 
+func (api API) deleteAll(c echo.Context) error {
+  if err:=api.db.Exec("DELETE FROM rest_users").Error;err!=nil{
+
+		log.Printf("Delete User Error:%v", err)
+		return c.JSON(http.StatusNotFound,err)
+  }
+	return c.JSON(http.StatusOK, "")
+}
 // Get All User
 // @Summary Get All User.
 // @Description Get All Users from server.
