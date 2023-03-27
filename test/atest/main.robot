@@ -3,14 +3,14 @@ Library               RequestsLibrary
 Library               JSONLibrary
 Library               Collections
 
-#Suite Setup    Create Session  jsonplaceholder  http://127.0.0.1:8081
-Suite Setup    Create Session  jsonplaceholder  http://172.22.255.1:8081
+Suite Setup    Create Session  jsonplaceholder  http://127.0.0.1:8888/api
+#Suite Setup    Create Session  jsonplaceholder  http://172.22.255.1:8081
 *** Variables ***
 *** Test Cases ***
 
 Create User
-    &{data}=    Create dictionary  name=iBaby
-    ${resp}=    POST On Session    jsonplaceholder  /users  json=${data}  expected_status=anything
+    &{data}=    Create dictionary  name=iBab892763y
+    ${resp}=    POST On Session    jsonplaceholder  /user  json=${data}  expected_status=anything
     Status Should Be                 201  ${resp}
     Dictionary Should Contain Key    ${resp.json()}  id
     ${id}=   Get Value From Json   ${resp.json()}  id
@@ -21,21 +21,21 @@ Create User
     
 Get User
     Log To Console    ${USER_ID} 
-    ${endpoint}=  Set Variable   /users/${USER_ID}
+    ${endpoint}=  Set Variable   /user/${USER_ID}
     ${resp}=  GET On Session    jsonplaceholder    ${endpoint}  
     Should Be Equal As Strings          ${resp.reason}  OK
     Log To Console    ${resp.json()}
 
 Update User
     Log To Console    ${USER_ID} 
-    ${endpoint}=  Set Variable   /users/${USER_ID}
-    &{data}=    Create dictionary  name=New Baby
+    ${endpoint}=  Set Variable   /user
+    &{data}=    Create dictionary   id=1 name=New Baby
     ${resp}=    PUT On Session    jsonplaceholder  ${endpoint}  json=${data}  expected_status=anything
     Status Should Be                 200  ${resp}
     Dictionary Should Contain Key    ${resp.json()}  id
     Log To Console    ${resp.json()}
 
 Delete User
-    ${endpoint}=  Set Variable   /users/${USER_ID}
+    ${endpoint}=  Set Variable   /user/${USER_ID}
     ${resp}=    DELETE On Session   jsonplaceholder  ${endpoint}  
     Status Should Be                 200  ${resp}

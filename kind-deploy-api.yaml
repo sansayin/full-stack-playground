@@ -1,24 +1,24 @@
-kind: Pod
-apiVersion: v1
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: zero-1 
+  name: zero-api-deployment
   labels:
-    app: zero
+    app: api 
 spec:
-  containers:
-  - name: zero-api
-    image: sansayin/zero-app:latest 
----
-kind: Pod
-apiVersion: v1
-metadata:
-  name: zero-2 
-  labels:
-    app: zero 
-spec:
-  containers:
-  - name: zero-api 
-    image: sansayin/zero-app:latest 
+  replicas: 2 
+  selector:
+    matchLabels:
+      app: api 
+  template:
+    metadata:
+      labels:
+        app: api 
+    spec:
+      containers:
+      - name: api 
+        image: sansayin/zero-app:latest 
+        ports:
+        - containerPort: 8888 
 ---
 kind: Service
 apiVersion: v1
@@ -27,7 +27,8 @@ metadata:
 spec:
   type: LoadBalancer
   selector:
-    app: zero 
+    app: api 
   ports:
   # Default port used by the image
-  - port: 8888 
+  - port: 80
+    targetPort: 8888

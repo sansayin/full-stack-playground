@@ -3,6 +3,9 @@ test: lint unit-test
 
 PLATFORM=local
 
+init-docker:
+	@docker-compose -f ./env.compose.yaml up -d  
+
 bin/main:
 	@docker build -f ./dev.dockerfile . --target bin \
 	--output ./bin/ \
@@ -57,21 +60,21 @@ push: image
 LB_IP=$(shell kubectl get svc/zero-rest-service -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
 create:
-	curl -X POST http://$(LB_IP):8081/users \
+	curl -X POST http://$(LB_IP):8888/api/user \
    -H 'Content-Type: application/json' \
    -d '{"name":"BY"}'
 
 delete:
-	curl -X DELETE http://$(LB_IP):8081/users/2 \
+	curl -X DELETE http://$(LB_IP):8888/users/2 \
    -H 'Content-Type: application/json'
 
 update:
-	curl -X PUT http://$(LB_IP):8081/users/11 \
+	curl -X PUT http://$(LB_IP):8888/user \
    -H 'Content-Type: application/json'    \
    -d '{"name":"bing"}'
 
 getall:
-	curl -X GET http://$(LB_IP):8081/users
+	curl -X GET http://$(LB_IP):8888/users
 
 stress:
 	#ab -p user.json -T application/json -c 100 -n 2000 \
