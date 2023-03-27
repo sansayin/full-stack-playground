@@ -3,12 +3,8 @@ FROM golang:alpine AS base
 WORKDIR /src
 ENV CGO_ENABLED=0
 COPY go.* .
-COPY docs .
 COPY api .
-COPY cmd .
-COPY db .
-COPY graph .
-COPY server .
+COPY rpc .
 RUN --mount=type=cache,target=/go/pkg/mod \
     go mod download
 
@@ -18,7 +14,12 @@ ARG TARGETARCH
 RUN --mount=target=. \
     --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
-    GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o /out/main  ./cmd
+    GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o /out/rest  ./api
+
+RUN --mount=target=. \
+    --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o /out/rpc  ./rpc
 #RUN CGO_ENABLED=1 GOOS=linux go build -o /app -a -ldflags '-linkmode external -extldflags "-static"' .
 FROM base AS unit-test
 RUN --mount=target=. \
@@ -40,12 +41,12 @@ FROM scratch AS unit-test-coverage
 COPY --from=unit-test /out/cover.out /cover.out
 
 FROM scratch AS bin-unix
-COPY --from=build /out/main /
+COPY --from=build /out/* /
 
 FROM bin-unix AS bin-linux
 FROM bin-unix AS bin-darwin
 
 FROM scratch AS bin-windows
-COPY --from=build /out/main /main.exe
+COPY --from=build /out/* /main.exe
 
 FROM bin-${TARGETOS} as bin

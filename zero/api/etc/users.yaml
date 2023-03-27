@@ -1,8 +1,0 @@
-Name: users-api
-Host: 0.0.0.0
-Port: 8888
-Users:
-  Etcd:
-    Hosts:
-      - localhost:2379
-    Key: user.rpc

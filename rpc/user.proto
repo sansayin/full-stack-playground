@@ -1,0 +1,30 @@
+syntax = "proto3";
+package user;
+  
+option go_package = "./pb";
+
+message UserRequest {
+    string id = 1;
+}
+
+message UserInfo {
+  string id =1;
+  string name =2;
+}
+
+message UserResponse {
+  UserInfo data=1;
+}
+
+message Empty {
+}
+message ListResponse {
+    repeated UserInfo data = 1;
+}
+service user {
+    rpc getUser(UserRequest) returns(UserResponse);
+    rpc getAllUsers(Empty) returns (ListResponse);
+    rpc createUser(UserInfo) returns (UserResponse);
+    rpc updateUser(UserInfo) returns (UserResponse);
+}
+//goctl rpc protoc  user.proto --go_out=. --go-grpc_out=. --zrpc_out=.  

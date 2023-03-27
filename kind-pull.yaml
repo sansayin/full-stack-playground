@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: Pod
-metadata:
-  name: go-rest 
-spec:
-  containers:
-  - name: goapp 
-    image: sansayin/goapp:latest
-    imagePullPolicy: Never  # or IfNotPresent

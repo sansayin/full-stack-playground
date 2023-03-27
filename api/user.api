@@ -1,0 +1,28 @@
+type (
+	UserRequest {
+		Id string `path:"id"`
+	}
+
+	UserResponse {
+		Id   string `json:"id"`
+		Name string `json:"name"`
+	}
+
+	UserInfo {
+		Id   string `json:"id,optional"`
+		Name string `json:"name"`
+	}
+)
+service user {
+	@handler getUser
+	get /api/user/:id (UserRequest) returns (UserResponse)
+	
+	@handler getUsers
+	get /api/users returns([]UserInfo)
+	
+	@handler addUser
+	post /api/user (UserInfo) returns (UserResponse)
+	
+	@handler updateUser
+	put /api/user (UserInfo) returns (UserResponse)
+}

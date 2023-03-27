@@ -1,0 +1,11 @@
+Name: users-rest
+Host: 0.0.0.0
+Port: 8888
+Etcd:
+  Hosts:
+  - 10.0.0.245:2379
+UserRpc:
+  Etcd:
+    Hosts:
+      - 10.0.0.245:2379
+    Key: user.rpc

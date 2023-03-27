@@ -1,0 +1,12 @@
+FROM alpine:latest  
+
+RUN apk --no-cache add ca-certificates
+
+WORKDIR /root/
+
+RUN mkdir  etc
+COPY api/etc etc 
+COPY bin/rest .
+EXPOSE 8888 
+
+CMD ["./rest"]

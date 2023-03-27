@@ -1,0 +1,10 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: zero-rpc-1 
+  labels:
+    app: zero-rpc
+spec:
+  containers:
+  - name: zero-rpc
+    image: sansayin/zero-rpc:latest 

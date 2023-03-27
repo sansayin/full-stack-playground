@@ -1,0 +1,2 @@
+goctl model pg datasource --url="postgres://postgres:p4ssw0rd@127.0.0.1:5432/dev?sslmode=disable" -t="zero_user"  -dir="." -c
+
