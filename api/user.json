@@ -1,0 +1,171 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "",
+    "version": ""
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/user": {
+      "post": {
+        "operationId": "addUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UserResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserInfo"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "user"
+        ]
+      },
+      "put": {
+        "operationId": "updateUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UserResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserInfo"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "/api/user/{id}": {
+      "get": {
+        "operationId": "getUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UserResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "/api/users": {
+      "get": {
+        "operationId": "getUsers",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/[]UserInfo"
+            }
+          }
+        },
+        "requestBody": {},
+        "tags": [
+          "user"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "UserInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "title": "UserInfo",
+      "required": [
+        "name"
+      ]
+    },
+    "UserRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "title": "UserRequest",
+      "required": [
+        "id"
+      ]
+    },
+    "UserResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "title": "UserResponse",
+      "required": [
+        "id",
+        "name"
+      ]
+    }
+  },
+  "securityDefinitions": {
+    "apiKey": {
+      "type": "apiKey",
+      "description": "Enter JWT Bearer token **_only_**",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "apiKey": []
+    }
+  ]
+}

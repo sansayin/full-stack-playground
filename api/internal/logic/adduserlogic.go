@@ -26,16 +26,17 @@ func NewAddUserLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddUserLo
 }
 
 func (l *AddUserLogic) AddUser(req *types.UserInfo) (resp *types.UserResponse, err error) {
+	// todo: add your logic here and delete this line
 	res, err := l.svcCtx.User.CreateUser(l.ctx, &pb.UserInfo{
 		Id:   req.Id,
 		Name: req.Name,
 	})
 	if err != nil {
-    log.Printf("Error: %v\n", err)
+		log.Printf("Error: %v\n", err)
 		return nil, err
 	}
 	return &types.UserResponse{
-		Id: res.Data.Id,
-    Name: res.Data.Name,
-	},err 
+		Id:   res.Data.Id,
+		Name: res.Data.Name,
+	}, err
 }

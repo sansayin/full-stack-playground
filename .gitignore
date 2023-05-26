@@ -51,3 +51,4 @@ docs/_build/
 
 cms/
 test/results
+default.etcd/

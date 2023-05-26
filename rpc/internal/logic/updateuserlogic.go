@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 
-	"go-rest/model"
+	"go-rest/rpc/model"
 	"go-rest/rpc/internal/svc"
 	"go-rest/rpc/pb"
 

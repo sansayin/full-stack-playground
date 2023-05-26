@@ -23,15 +23,15 @@ lint:
 	@docker build -f ./dev.dockerfile .   --target lint
 
 kind-cluster:
-	kind create cluster --config ./kind-cluster.yaml --name dev-cluster
+	kind create cluster --config ./kind-cluster.yaml --name dev 
 	#kubectl apply -f ./db-endpoint.yaml
 	kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.9/config/manifests/metallb-native.yaml
 	kubectl apply -f ./metallb-config.yaml
 
-delete-cluster:
-	kind delete cluster --name dev-cluster 
+Delete-cluster:
 	kubectl delete -f https://raw.githubusercontent.com/metallb/metallb/v0.13.9/config/manifests/metallb-native.yaml
 	kubectl delete  -f ./metallb-config.yaml
+	kind delete cluster --name dev 
 
 kind-deploy-rpc:
 	echo "Deploy sasayin/zero-rpc:latest as metallb loadbalancer demo\n"
@@ -60,26 +60,26 @@ push: image
 LB_IP=$(shell kubectl get svc/zero-rest-service -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
 create:
-	curl -X POST http://$(LB_IP):8888/api/user \
+	curl -X POST http://$(LB_IP)/api/user \
    -H 'Content-Type: application/json' \
    -d '{"name":"BY"}'
 
 delete:
-	curl -X DELETE http://$(LB_IP):8888/users/2 \
+	curl -X DELETE http://$(LB_IP)/api/users/2 \
    -H 'Content-Type: application/json'
 
 update:
-	curl -X PUT http://$(LB_IP):8888/user \
+	curl -X PUT http://$(LB_IP)/api/user \
    -H 'Content-Type: application/json'    \
    -d '{"name":"bing"}'
 
 getall:
-	curl -X GET http://$(LB_IP):8888/users
+	curl -X GET http://$(LB_IP)/api/users
 
 stress:
 	#ab -p user.json -T application/json -c 100 -n 2000 \
 	http://localhost:8888/api/users
-	ab -c 100 -n 20000 -m GET http://$(LB_IP):8888/api/users
+	ab -c 100 -n 20000 -m GET http://$(LB_IP)/api/users
 
 .ONESHELL:
 robor-env:

@@ -3,11 +3,10 @@ package logic
 import (
 	"context"
 
+	"github.com/zeromicro/go-zero/core/logx"
 	"go-rest/api/internal/svc"
 	"go-rest/api/internal/types"
 	"go-rest/rpc/pb"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type UpdateUserLogic struct {
@@ -29,11 +28,11 @@ func (l *UpdateUserLogic) UpdateUser(req *types.UserInfo) (resp *types.UserRespo
 		Id:   req.Id,
 		Name: req.Name,
 	})
-  if(err!=nil){
-    return nil, err
-  }
+	if err != nil {
+		return nil, err
+	}
 	return &types.UserResponse{
-   Id: res.Data.Id, 
-   Name: res.Data.Name,
-  }, err
+		Id:   res.Data.Id,
+		Name: res.Data.Name,
+	}, err
 }

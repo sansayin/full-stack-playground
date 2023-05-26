@@ -16,6 +16,7 @@ func getUserHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
+
 		l := logic.NewGetUserLogic(r.Context(), svcCtx)
 		resp, err := l.GetUser(&req)
 		if err != nil {

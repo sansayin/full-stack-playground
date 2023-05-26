@@ -3,8 +3,8 @@ Library               RequestsLibrary
 Library               JSONLibrary
 Library               Collections
 
-Suite Setup    Create Session  jsonplaceholder  http://127.0.0.1:8888/api
-#Suite Setup    Create Session  jsonplaceholder  http://172.22.255.1:8081
+#Suite Setup    Create Session  jsonplaceholder  http://127.0.0.1/api
+Suite Setup    Create Session  jsonplaceholder  http://172.22.255.1/api
 *** Variables ***
 *** Test Cases ***
 

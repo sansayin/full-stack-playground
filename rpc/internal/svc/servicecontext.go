@@ -3,7 +3,7 @@ package svc
 import (
 	_ "github.com/lib/pq"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"go-rest/model"
+	"go-rest/rpc/model"
 	"go-rest/rpc/internal/config"
 )
 

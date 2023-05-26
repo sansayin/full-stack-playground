@@ -18,7 +18,7 @@ import (
 var (
 	zeroUserFieldNames          = builder.RawFieldNames(&ZeroUser{}, true)
 	zeroUserRows                = strings.Join(zeroUserFieldNames, ",")
-	zeroUserRowsExpectAutoSet   = strings.Join(stringx.Remove(zeroUserFieldNames, "user_id"), ",")
+	zeroUserRowsExpectAutoSet   = strings.Join(stringx.Remove(zeroUserFieldNames), ",")
 	zeroUserRowsWithPlaceHolder = builder.PostgreSqlJoin(stringx.Remove(zeroUserFieldNames, "user_id"))
 
 	cachePublicZeroUserUserIdPrefix   = "cache:public:zeroUser:userId:"
@@ -31,6 +31,7 @@ type (
 		FindOne(ctx context.Context, userId string) (*ZeroUser, error)
 		FindOneByUsername(ctx context.Context, username string) (*ZeroUser, error)
     FindMany(ctx context.Context)(*[]ZeroUser, error)
+
 		Update(ctx context.Context, data *ZeroUser) error
 		Delete(ctx context.Context, userId string) error
 	}
@@ -41,14 +42,14 @@ type (
 	}
 
 	ZeroUser struct {
-		UserId   string  `db:"user_id"`
+		UserId   string `db:"user_id"`
 		Username string `db:"username"`
 	}
 )
 
-func newZeroUserModel(conn sqlx.SqlConn, c cache.CacheConf) *defaultZeroUserModel {
+func newZeroUserModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultZeroUserModel {
 	return &defaultZeroUserModel{
-		CachedConn: sqlc.NewConn(conn, c),
+		CachedConn: sqlc.NewConn(conn, c, opts...),
 		table:      `"public"."zero_user"`,
 	}
 }
@@ -68,7 +69,22 @@ func (m *defaultZeroUserModel) Delete(ctx context.Context, userId string) error 
 	return err
 }
 
-
+func (m *defaultZeroUserModel) FindOne(ctx context.Context, userId string) (*ZeroUser, error) {
+	publicZeroUserUserIdKey := fmt.Sprintf("%s%v", cachePublicZeroUserUserIdPrefix, userId)
+	var resp ZeroUser
+	err := m.QueryRowCtx(ctx, &resp, publicZeroUserUserIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
+		query := fmt.Sprintf("select %s from %s where user_id = $1 limit 1", zeroUserRows, m.table)
+		return conn.QueryRowCtx(ctx, v, query, userId)
+	})
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
 func (m *defaultZeroUserModel)FindMany(ctx context.Context)(*[]ZeroUser, error){
 	var resp  = make([]ZeroUser,0)
 	err := m.QueryRowCtx(ctx, &resp, "", func(ctx context.Context, conn sqlx.SqlConn, v interface{}) error {
@@ -84,27 +100,10 @@ func (m *defaultZeroUserModel)FindMany(ctx context.Context)(*[]ZeroUser, error){
 		return nil, err
 	}
 }
-func (m *defaultZeroUserModel) FindOne(ctx context.Context, userId string) (*ZeroUser, error) {
-	publicZeroUserUserIdKey := fmt.Sprintf("%s%v", cachePublicZeroUserUserIdPrefix, userId)
-	var resp ZeroUser
-	err := m.QueryRowCtx(ctx, &resp, publicZeroUserUserIdKey, func(ctx context.Context, conn sqlx.SqlConn, v interface{}) error {
-		query := fmt.Sprintf("select %s from %s where user_id = $1 limit 1", zeroUserRows, m.table)
-		return conn.QueryRowCtx(ctx, v, query, userId)
-	})
-	switch err {
-	case nil:
-		return &resp, nil
-	case sqlc.ErrNotFound:
-		return nil, ErrNotFound
-	default:
-		return nil, err
-	}
-}
-
 func (m *defaultZeroUserModel) FindOneByUsername(ctx context.Context, username string) (*ZeroUser, error) {
 	publicZeroUserUsernameKey := fmt.Sprintf("%s%v", cachePublicZeroUserUsernamePrefix, username)
 	var resp ZeroUser
-	err := m.QueryRowIndexCtx(ctx, &resp, publicZeroUserUsernameKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v interface{}) (i interface{}, e error) {
+	err := m.QueryRowIndexCtx(ctx, &resp, publicZeroUserUsernameKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
 		query := fmt.Sprintf("select %s from %s where username = $1 limit 1", zeroUserRows, m.table)
 		if err := conn.QueryRowCtx(ctx, &resp, query, username); err != nil {
 			return nil, err
@@ -122,15 +121,14 @@ func (m *defaultZeroUserModel) FindOneByUsername(ctx context.Context, username s
 }
 
 func (m *defaultZeroUserModel) Insert(ctx context.Context, data *ZeroUser) (*ZeroUser, error) {
-  var resp ZeroUser
 	publicZeroUserUserIdKey := fmt.Sprintf("%s%v", cachePublicZeroUserUserIdPrefix, data.UserId)
 	publicZeroUserUsernameKey := fmt.Sprintf("%s%v", cachePublicZeroUserUsernamePrefix, data.Username)
+    var resp ZeroUser
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values ($1) RETURNING username, user_id;", m.table, zeroUserRowsExpectAutoSet)
-    err = conn.QueryRowCtx(ctx,&resp, query, data.Username)
-    return 
+		query := fmt.Sprintf("insert into %s (%s) values ($1, $2) RETURNING *", m.table, zeroUserRowsExpectAutoSet)
+//		return conn.ExecCtx(ctx, query, data.UserId, data.Username)
+        return nil, conn.QueryRowCtx(ctx,&resp, query, data.UserId,data.Username)
 	}, publicZeroUserUserIdKey, publicZeroUserUsernameKey)
-
 	return &resp, err
 }
 
@@ -144,17 +142,16 @@ func (m *defaultZeroUserModel) Update(ctx context.Context, newData *ZeroUser) er
 	publicZeroUserUsernameKey := fmt.Sprintf("%s%v", cachePublicZeroUserUsernamePrefix, data.Username)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where user_id = $1", m.table, zeroUserRowsWithPlaceHolder)
-		_,err= conn.ExecCtx(ctx, query, newData.UserId, newData.Username)
-    return
+		return conn.ExecCtx(ctx, query, newData.UserId, newData.Username)
 	}, publicZeroUserUserIdKey, publicZeroUserUsernameKey)
 	return err
 }
 
-func (m *defaultZeroUserModel) formatPrimary(primary interface{}) string {
+func (m *defaultZeroUserModel) formatPrimary(primary any) string {
 	return fmt.Sprintf("%s%v", cachePublicZeroUserUserIdPrefix, primary)
 }
 
-func (m *defaultZeroUserModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary interface{}) error {
+func (m *defaultZeroUserModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
 	query := fmt.Sprintf("select %s from %s where user_id = $1 limit 1", zeroUserRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }

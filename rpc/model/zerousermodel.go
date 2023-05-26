@@ -20,8 +20,8 @@ type (
 )
 
 // NewZeroUserModel returns a model for the database table.
-func NewZeroUserModel(conn sqlx.SqlConn, c cache.CacheConf) ZeroUserModel {
+func NewZeroUserModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) ZeroUserModel {
 	return &customZeroUserModel{
-		defaultZeroUserModel: newZeroUserModel(conn, c),
+		defaultZeroUserModel: newZeroUserModel(conn, c, opts...),
 	}
 }
